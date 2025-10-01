@@ -1,11 +1,0 @@
-nohup: ignoring input
-`torch_dtype` is deprecated! Use `dtype` instead!
-Loading checkpoint shards:   0%|          | 0/5 [00:00<?, ?it/s]Loading checkpoint shards:  20%|██        | 1/5 [00:00<00:03,  1.31it/s]Loading checkpoint shards:  40%|████      | 2/5 [00:05<00:10,  3.36s/it]Loading checkpoint shards:  80%|████████  | 4/5 [00:06<00:01,  1.32s/it]Loading checkpoint shards: 100%|██████████| 5/5 [00:06<00:00,  1.23s/it]
-Some parameters are on the meta device because they were offloaded to the cpu.
-The image processor of type `Qwen2VLImageProcessor` is now loaded as a fast processor by default, even if the model checkpoint was saved with a slow processor. This is a breaking change and may produce slightly different outputs. To continue using the slow processor, instantiate this class with `use_fast=False`. Note that this behavior will be extended to all models in a future release.
-INFO:     Started server process [1322066]
-INFO:     Waiting for application startup.
-INFO:     Application startup complete.
-ERROR:    [Errno 98] error while attempting to bind on address ('0.0.0.0', 8001): address already in use
-INFO:     Waiting for application shutdown.
-INFO:     Application shutdown complete.

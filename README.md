@@ -34,5 +34,5 @@ curl -X POST "http://127.0.0.1:8000/infer" \
 
 ## agent部署 
 
-视频处理0.5s左右
+vs_utils/anomaly.py是目前的异常检测模块 但是效率很低
 
