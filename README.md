@@ -1,11 +1,14 @@
 
 ## 模型部署 
 
+
+
+
+```markdown
+
 脚本： server.py
 命令： nohup /home/l40/anaconda3/envs/testv/bin/uvicorn server:app --host 0.0.0.0 --port 8000 > server.log 2>&1 &
 
-
-## agent部署 
 curl -X POST "http://127.0.0.1:8000/infer" \
 -H "Content-Type: application/json" \
 -d '[
@@ -24,13 +27,12 @@ curl -X POST "http://127.0.0.1:8000/infer" \
       }
     ]
   }
-]'
+```
 
 
 
 
-
-
+## agent部署 
 
 视频处理0.5s左右
 

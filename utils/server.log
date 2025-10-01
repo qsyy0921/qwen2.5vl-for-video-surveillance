@@ -11,3 +11,15 @@ INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
 INFO:     127.0.0.1:54994 - "POST /infer HTTP/1.1" 200 OK
 qwen-vl-utils using decord to read video.
 INFO:     127.0.0.1:60916 - "POST /infer HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36272 - "POST /infer HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48414 - "POST /predict HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:48418 - "POST /infer HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37702 - "POST /infer HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37716 - "POST /predict HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:37730 - "POST /infer HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38262 - "POST /infer HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58844 - "POST /predict HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:58858 - "POST /infer HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54102 - "POST /infer HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55912 - "POST /infer HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55922 - "POST /infer HTTP/1.1" 200 OK
