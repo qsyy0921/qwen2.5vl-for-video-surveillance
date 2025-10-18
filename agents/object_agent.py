@@ -1,48 +1,45 @@
+# object_agent.py
 import requests
-import cv2
-import numpy as np
-import tempfile
-import os
 
 API_URL = "http://127.0.0.1:8000/infer"
 
 class ObjectAgent:
-    """针对异常区域，分析对象与行为"""
-    def __init__(self, session=None):
-        self.s = session or requests.Session()
+    """
+    对象智能体：分析视频中的主要对象、状态和交互关系
+    """
+    def analyze(self, video_path: str):
+        # 生成请求体，完全符合 server.py 的接口要求
+        messages = [
+            {
+                "role": "user",
+                "content": [
+                    {
+                        "type": "video",
+                        "video": f"file://{video_path}",
+                        "max_pixels": 151200,
+                        "fps": 1.0
+                    },
+                    {
+                        "type": "text",
+                        "text": (
+                            "请仔细分析这段视频中的主要对象："
+                            "列出出现的所有关键对象（例如人、车、包裹、设备等），"
+                            "描述每个对象的数量、外观特征、动作状态（静止/移动/交互），"
+                            "并指出对象之间的关系（例如搬运、交谈、冲突、合作）。"
+                        )
+                    }
+                ]
+            }
+        ]
 
-    def analyze(self, video_path: str, mask: dict = None):
-        video_file = video_path
-        if mask:
-            cap = cv2.VideoCapture(video_path.replace("file://", ""))
-            width = mask['x2'] - mask['x1']
-            height = mask['y2'] - mask['y1']
-            tmp_file = tempfile.NamedTemporaryFile(delete=False, suffix=".mp4").name
-            fourcc = cv2.VideoWriter_fourcc(*'mp4v')
-            out = cv2.VideoWriter(tmp_file, fourcc, 1.0, (width, height))
-            while True:
-                ret, frame = cap.read()
-                if not ret:
-                    break
-                roi = frame[mask['y1']:mask['y2'], mask['x1']:mask['x2']]
-                roi = cv2.resize(roi, (width, height))
-                out.write(roi)
-            cap.release()
-            out.release()
-            video_file = f"file://{tmp_file}"
-
-        messages = [{
-            "role": "user",
-            "content": [
-                {"type": "video", "video": video_file, "fps": 1.0},
-                {"type": "text", "text": "请分析异常区域内的关键对象及其行为与交互。"}
-            ]
-        }]
-        r = self.s.post(API_URL, json=messages, timeout=300)
-        r.raise_for_status()
-        data = r.json()
-
-        if mask:
-            os.unlink(tmp_file)
-
-        return data.get("result", data)
+        try:
+            resp = requests.post(API_URL, json=messages)
+            resp.raise_for_status()  # 捕获 HTTP 错误
+            data = resp.json()
+            if isinstance(data, dict) and "result" in data:
+                result = data["result"]
+                return result[0] if isinstance(result, list) else result
+            else:
+                return data
+        except requests.exceptions.RequestException as e:
+            return {"error": f"请求失败: {str(e)}"}

@@ -1,61 +1,54 @@
-import sys, os, asyncio, time
-from concurrent.futures import ThreadPoolExecutor
-import requests
-
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-
-from vs_utils.anomaly import detect_anomaly_roi
+# main.py
+import json
+import time
 from agents.scene_agent import SceneAgent
 from agents.object_agent import ObjectAgent
 from agents.integrate_agent import IntegrateAgent
 
-VIDEO_PATH = "/home/l40/newdisk1/mfl/qwenvl/videos/demo.mp4"
-MAX_CONCURRENT_GPU = 1
-CACHE_TTL = 60
+def run_pipeline(video_path: str):
+    # 创建 agent 实例
+    scene_agent = SceneAgent()
+    object_agent = ObjectAgent()
+    integrate_agent = IntegrateAgent()
 
-executor = ThreadPoolExecutor(max_workers=4)
-gpu_semaphore = asyncio.Semaphore(MAX_CONCURRENT_GPU)
+    # 记录开始时间
+    start_time = time.time()
 
-session = requests.Session()
-scene_agent = SceneAgent(session)
-object_agent = ObjectAgent(session)
-integrate_agent = IntegrateAgent(session)
+    # 场景分析
+    scene_start_time = time.time()  # 记录场景分析开始时间
+    scene_result = scene_agent.analyze(video_path)
+    scene_end_time = time.time()  # 记录场景分析结束时间
+    scene_analysis_time = scene_end_time - scene_start_time  # 计算场景分析时间
+    print("场景分析完成。\n")
 
-cache = {"scene_result": None, "scene_time": 0}
+    # 对象分析
+    object_start_time = time.time()  # 记录对象分析开始时间
+    object_result = object_agent.analyze(video_path)
+    object_end_time = time.time()  # 记录对象分析结束时间
+    object_analysis_time = object_end_time - object_start_time  # 计算对象分析时间
+    print("对象分析完成。\n")
 
-async def call_agent(func, *args):
-    async with gpu_semaphore:
-        loop = asyncio.get_event_loop()
-        return await loop.run_in_executor(executor, lambda: func(*args))
+    # 综合报告生成
+    integrate_start_time = time.time()  # 记录综合报告生成开始时间
+    final_report = integrate_agent.analyze(scene_result, object_result)
+    integrate_end_time = time.time()  # 记录综合报告生成结束时间
+    integrate_analysis_time = integrate_end_time - integrate_start_time  # 计算综合报告时间
+    print("综合报告生成完成！\n")
 
-async def pipeline_once(video_path):
-    mask = await asyncio.get_event_loop().run_in_executor(executor, detect_anomaly_roi, video_path)
-    if mask is None:
-        print(f"[{time.strftime('%X')}] 💤 未检测到异常，跳过推理")
-        return
+    # 打印最终报告
+    print("📋 最终综合报告：")
+    print(json.dumps(final_report, ensure_ascii=False, indent=2) if isinstance(final_report, dict) else final_report)
 
-    now = time.time()
-    if not cache["scene_result"] or now - cache["scene_time"] > CACHE_TTL:
-        scene_task = asyncio.create_task(call_agent(scene_agent.analyze, video_path))
-    else:
-        scene_task = asyncio.create_task(asyncio.sleep(0, result=cache["scene_result"]))
+    # 计算总推理时间
+    end_time = time.time()
+    total_time = end_time - start_time  # 总时间（秒）
 
-    object_task = asyncio.create_task(call_agent(object_agent.analyze, video_path, mask))
-    scene_result, object_result = await asyncio.gather(scene_task, object_task)
-
-    if now - cache.get("scene_time", 0) > CACHE_TTL:
-        cache["scene_result"], cache["scene_time"] = scene_result, now
-
-    final_report = await call_agent(integrate_agent.analyze, scene_result, object_result)
-    print(f"\n[{time.strftime('%X')}] 综合报告：\n{final_report}\n")
-
-async def run_loop(video_path, interval=10):
-    while True:
-        try:
-            await pipeline_once(video_path)
-        except Exception as e:
-            print("Error:", e)
-        await asyncio.sleep(interval)
+    # 输出每个步骤的时间和总时间
+    print(f"\n⏱️ 场景分析时间：{scene_analysis_time:.2f} 秒")
+    print(f"⏱️ 对象分析时间：{object_analysis_time:.2f} 秒")
+    print(f"⏱️ 综合报告生成时间：{integrate_analysis_time:.2f} 秒")
+    print(f"⏱️ 总推理时间：{total_time:.2f} 秒")
 
 if __name__ == "__main__":
-    asyncio.run(run_loop(VIDEO_PATH, interval=10))
+    video_path = "/home/l40/newdisk1/mfl/videosur/data/videos/car.mp4"  # 你的视频路径
+    run_pipeline(video_path)

@@ -1,17 +1,16 @@
-# vs_utils/motion.py
 import cv2
 import numpy as np
 
-def detect_motion_roi(video_path: str, sample_rate=5, diff_thresh=30, area_thresh=500):
+def detect_motion_roi(video_path: str, sample_rate=5, diff_thresh=25, area_thresh=500):
     """
-    帧差运动检测，返回合并运动区域的 bbox
+    帧差运动检测，返回合并运动区域 bbox
     """
     if video_path.startswith("file://"):
         video_path = video_path.replace("file://", "")
 
     cap = cv2.VideoCapture(video_path)
     if not cap.isOpened():
-        print(f"[motion] ❌ 无法打开视频: {video_path}")
+        print(f"[motion] 无法打开视频: {video_path}")
         return None
 
     ret, prev = cap.read()
@@ -40,7 +39,6 @@ def detect_motion_roi(video_path: str, sample_rate=5, diff_thresh=30, area_thres
         accum_mask = th if accum_mask is None else cv2.bitwise_or(accum_mask, th)
 
     cap.release()
-
     if accum_mask is None:
         return None
 
@@ -57,5 +55,5 @@ def detect_motion_roi(video_path: str, sample_rate=5, diff_thresh=30, area_thres
     x1, y1 = np.min(pts, axis=0)
     x2, y2 = np.max(pts, axis=0)
     bbox = {"x1": int(x1), "y1": int(y1), "x2": int(x2), "y2": int(y2)}
-    print(f"[motion] ✅ 检测到运动区域: {bbox}")
+    print(f"[motion] 检测到运动区域: {bbox}")
     return bbox

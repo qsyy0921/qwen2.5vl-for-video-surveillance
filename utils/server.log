@@ -1,0 +1,25 @@
+nohup: ignoring input
+The image processor of type `Qwen2VLImageProcessor` is now loaded as a fast processor by default, even if the model checkpoint was saved with a slow processor. This is a breaking change and may produce slightly different outputs. To continue using the slow processor, instantiate this class with `use_fast=False`. Note that this behavior will be extended to all models in a future release.
+`torch_dtype` is deprecated! Use `dtype` instead!
+⏳ 正在加载模型...
+Loading checkpoint shards:   0%|          | 0/5 [00:00<?, ?it/s]Loading checkpoint shards:  20%|██        | 1/5 [00:00<00:02,  1.38it/s]Loading checkpoint shards:  40%|████      | 2/5 [00:01<00:02,  1.44it/s]Loading checkpoint shards:  60%|██████    | 3/5 [00:02<00:01,  1.48it/s]Loading checkpoint shards:  80%|████████  | 4/5 [00:02<00:00,  1.48it/s]Loading checkpoint shards: 100%|██████████| 5/5 [00:02<00:00,  2.01it/s]Loading checkpoint shards: 100%|██████████| 5/5 [00:02<00:00,  1.72it/s]
+INFO:     Started server process [445640]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+✅ 模型加载完成，用时 3.08 秒
+INFO:     127.0.0.1:54994 - "POST /infer HTTP/1.1" 200 OK
+qwen-vl-utils using decord to read video.
+INFO:     127.0.0.1:60916 - "POST /infer HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36272 - "POST /infer HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48414 - "POST /predict HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:48418 - "POST /infer HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37702 - "POST /infer HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37716 - "POST /predict HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:37730 - "POST /infer HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38262 - "POST /infer HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58844 - "POST /predict HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:58858 - "POST /infer HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54102 - "POST /infer HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55912 - "POST /infer HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55922 - "POST /infer HTTP/1.1" 200 OK

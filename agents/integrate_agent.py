@@ -1,24 +1,38 @@
-# 
-
-# agents/integrate_agent.py
+# integrate_agent.py
 import requests
+import json
 
 API_URL = "http://127.0.0.1:8000/infer"
 
 class IntegrateAgent:
-    """融合场景与对象分析，输出综合结论"""
-    def __init__(self, session=None):
-        self.s = session or requests.Session()
-
-    def analyze(self, scene_result, object_result):
-        prompt = (
-            f"将以下两段分析结果融合为一段综合描述，简要总结事件核心内容：\n\n"
-            f"【场景分析】{scene_result}\n\n"
-            f"【对象分析】{object_result}\n\n"
-            f"请输出一个结构化 JSON，包含 'summary'（一句话摘要）和 'suggestions'（三条处置建议）。"
+    """
+    整合智能体：融合场景和对象分析，输出综合报告与建议
+    """
+    def analyze(self, scene_result: str, object_result: str):
+        summary_prompt = (
+            f"请基于以下两部分内容生成一份综合报告：\n\n"
+            f"1. 场景分析结果：{scene_result}\n\n"
+            f"2. 对象分析结果：{object_result}\n\n"
+            "要求输出：\n"
+            "- 对整个事件的综合描述\n"
+            "- 关键对象的作用与关系\n"
+            "- 可能的异常或风险点\n"
+            "- 给出合理的事故处置或决策建议"
         )
-        messages = [{"role": "user", "content": [{"type": "text", "text": prompt}]}]
-        r = self.s.post(API_URL, json=messages, timeout=300)
-        r.raise_for_status()
-        data = r.json()
-        return data.get("result", data)
+
+        messages = [
+            {
+                "role": "user",
+                "content": [
+                    {"type": "text", "text": summary_prompt}
+                ]
+            }
+        ]
+
+        try:
+            resp = requests.post(API_URL, json=messages)
+            resp.raise_for_status()  # 捕获 HTTP 错误
+            data = resp.json()
+            return data.get("result", [""])[0] if isinstance(data.get("result"), list) else data
+        except requests.exceptions.RequestException as e:
+            return {"error": f"请求失败: {str(e)}"}
